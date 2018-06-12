@@ -1,3 +1,5 @@
+import Long from "long";
+
 declare module "event-store-client" {
 	export enum ExpectedVersion {
 		Any = -2,
@@ -65,7 +67,7 @@ declare module "event-store-client" {
 
 	export interface StoredEvent extends Event {
 		streamId: string;
-		eventNumber: number;
+		eventNumber: Long;
 		created: Date;
 		link: StoredEvent;
 	}
@@ -76,18 +78,18 @@ declare module "event-store-client" {
 	}
 
 	export interface IWriteEventsCompleted extends IOperationCompleted {
-		firstEventNumber: number;
-		lastEventNumber: number;
-		preparePosition: number;
-		commitPosition: number;
+		firstEventNumber: Long;
+		lastEventNumber: Long;
+		preparePosition: Long;
+		commitPosition: Long;
 	}
 
 	export interface IReadAllEventsCompleted {
-		commitPosition: number;
-		preparePosition: number;
+		commitPosition: Long;
+		preparePosition: Long;
 		events: any;
-		nextCommitPosition: number;
-		nextPreparePosition: number;
+		nextCommitPosition: Long;
+		nextPreparePosition: Long;
 		result: ReadAllResult;
 		error: string;
 	}
@@ -95,21 +97,21 @@ declare module "event-store-client" {
 	export interface IReadStreamEventsCompleted {
 		events: any;
 		result: ReadStreamResult;
-		nextEventNumber: number;
-		lastEventNumber: number;
+		nextEventNumber: Long;
+		lastEventNumber: Long;
 		isEndOfStream: boolean;
-		lastCommitPosition: number;
+		lastCommitPosition: Long;
 		error: string;
 	}
 
 	export interface IDeleteStreamCompleted extends IOperationCompleted {
-		preparePosition: number;
-		commitPosition: number
+		preparePosition: Long;
+		commitPosition: Long
 	}
 
 	export interface ISubscriptionConfirmation {
-		lastCommitPosition: number;
-		lastEventNumber: number;
+		lastCommitPosition: Long;
+		lastEventNumber: Long;
 	}
 
 	export interface ISubscriptionDropped {
@@ -149,7 +151,7 @@ declare module "event-store-client" {
 		 * @param credentials The username and password needed to perform the operation on this stream
 		 * @param callback Invoked when the operation is completed. Check the result to confirm it was successful.
 		 */
-		deleteStream(streamId: string, expectedVersion: number, requireMaster: boolean, hardDelete: boolean, credentials: ICredentials, callback: (completed: IDeleteStreamCompleted) => void): void;
+		deleteStream(streamId: string, expectedVersion: Long, requireMaster: boolean, hardDelete: boolean, credentials: ICredentials, callback: (completed: IDeleteStreamCompleted) => void): void;
 
 		/***
 		 * Sends a ping request to the server to ensure that the connection is still alive. The server should respond immediately.
@@ -182,7 +184,7 @@ declare module "event-store-client" {
          * @param settings Settings for this subscription.
          * @return The catch-up subscription instance.
          */
-        subscribeToStreamFrom(streamId: string, fromEventNumber: number, credentials: ICredentials, onEventAppeared: (event: StoredEvent) => void, onLiveProcessingStarted: () => void, onDropped: (EventStoreCatchUpSubscription: any, reason: string, Error: any) => void, settings: CatchUpSubscriptionSettings): EventStoreStreamCatchUpSubscription;
+        subscribeToStreamFrom(streamId: string, fromEventNumber: Long, credentials: ICredentials, onEventAppeared: (event: StoredEvent) => void, onLiveProcessingStarted: () => void, onDropped: (EventStoreCatchUpSubscription: any, reason: string, Error: any) => void, settings: CatchUpSubscriptionSettings): EventStoreStreamCatchUpSubscription;
 
 		/***
 		 * Reads events from across all streams, in order from newest to oldest
@@ -195,7 +197,7 @@ declare module "event-store-client" {
 		 * @param credentials The username and password needed to perform the operation on this stream
 		 * @param callback The callback to be fired once all the events have been retrieved
 		 */
-		readAllEventsBackward(commitPosition: number, preparePosition: number, maxCount: number, resolveLinkTos: boolean, requireMaster: boolean, onEventAppeared: (event: StoredEvent) => void, credentials: ICredentials, callback: (completed: IReadAllEventsCompleted) => void): void;
+		readAllEventsBackward(commitPosition: Long, preparePosition: Long, maxCount: number, resolveLinkTos: boolean, requireMaster: boolean, onEventAppeared: (event: StoredEvent) => void, credentials: ICredentials, callback: (completed: IReadAllEventsCompleted) => void): void;
 
 		/***
 		 * Reads events from across all streams, in order from oldest to newest
@@ -208,7 +210,7 @@ declare module "event-store-client" {
 		 * @param credentials The username and password needed to perform the operation on this stream
 		 * @param callback The callback to be fired once all the events have been retrieved
 		 */
-		readAllEventsForward(commitPosition: number, preparePosition: number, maxCount: number, resolveLinkTos: boolean, requireMaster: boolean, onEventAppeared: (event: StoredEvent) => void, credentials: ICredentials, callback: (completed: IReadAllEventsCompleted) => void): void;
+		readAllEventsForward(commitPosition: Long, preparePosition: Long, maxCount: number, resolveLinkTos: boolean, requireMaster: boolean, onEventAppeared: (event: StoredEvent) => void, credentials: ICredentials, callback: (completed: IReadAllEventsCompleted) => void): void;
 
 		/***
 		 * Reads events from a specific stream, in order from newest to oldest
@@ -221,7 +223,7 @@ declare module "event-store-client" {
 		 * @param credentials The username and password needed to perform the operation on this stream
 		 * @param callback The callback to be fired once all the events have been retrieved
 		 */
-		readStreamEventsBackward(streamId: string, fromEventNumber: number, maxCount: number, resolveLinkTos: boolean, requireMaster: boolean, onEventAppeared: (event: StoredEvent) => void, credentials: ICredentials, callback: (completed: IReadStreamEventsCompleted) => void): void;
+		readStreamEventsBackward(streamId: string, fromEventNumber: Long, maxCount: number, resolveLinkTos: boolean, requireMaster: boolean, onEventAppeared: (event: StoredEvent) => void, credentials: ICredentials, callback: (completed: IReadStreamEventsCompleted) => void): void;
 
 		/***
 		 * Reads events from a specific stream, in order from oldest to newest
@@ -234,7 +236,7 @@ declare module "event-store-client" {
 		 * @param credentials The username and password needed to perform the operation on this stream
 		 * @param callback The callback to be fired once all the events have been retrieved
 		 */
-		readStreamEventsForward(streamId: string, fromEventNumber: number, maxCount: number, resolveLinkTos: boolean, requireMaster: boolean, onEventAppeared: (event: StoredEvent) => void, credentials: ICredentials, callback: (completed: IReadStreamEventsCompleted) => void): void;
+		readStreamEventsForward(streamId: string, fromEventNumber: Long, maxCount: number, resolveLinkTos: boolean, requireMaster: boolean, onEventAppeared: (event: StoredEvent) => void, credentials: ICredentials, callback: (completed: IReadStreamEventsCompleted) => void): void;
 
 		/***
 		 * Unsubscribes from a stream
@@ -253,7 +255,7 @@ declare module "event-store-client" {
 		 * @param credentials The username and password need to perform the operation on this stream
 		 * @param callback Invoked once the operation has been completed. Check the result to confirm it was successful.
 		 */
-		writeEvents(streamId: string, expectedVersion: number, requireMaster: boolean, events: Event[], credentials: ICredentials, callback: (completed: IWriteEventsCompleted) => void): void;
+		writeEvents(streamId: string, expectedVersion: Long, requireMaster: boolean, events: Event[], credentials: ICredentials, callback: (completed: IWriteEventsCompleted) => void): void;
     }
 
     /***
@@ -341,6 +343,6 @@ declare module "event-store-client" {
          * @param subscriptionDropped Callback when subscription drops or is dropped.
          * @param settings Settings for this subscription.
 		 */
-        constructor(connection: Connection, streamId: string, fromEventNumberExclusive: number, userCredentials: ICredentials, eventAppeared: (event: StoredEvent) => void, liveProcessingStarted: () => void, subscriptionDropped: (EventStoreCatchUpSubscription: any, reason: string, Error: any) => void, settings: CatchUpSubscriptionSettings);
+        constructor(connection: Connection, streamId: string, fromEventNumberExclusive: Long, userCredentials: ICredentials, eventAppeared: (event: StoredEvent) => void, liveProcessingStarted: () => void, subscriptionDropped: (EventStoreCatchUpSubscription: any, reason: string, Error: any) => void, settings: CatchUpSubscriptionSettings);
     }
 }

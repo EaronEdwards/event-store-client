@@ -1,4 +1,5 @@
 var EventStoreClient = require("./index");
+var Long = require("long");
 
 // Sample application to demonstrate how to use the Event Store Client
 /*************************************************************************************************/
@@ -59,14 +60,14 @@ connection.writeEvents(destinationId, EventStoreClient.ExpectedVersion.Any, fals
 
 var nonExistentStreamId = "NoSuchStream";
 console.log('Reading events forward from ' + nonExistentStreamId + '...');
-connection.readStreamEventsForward(nonExistentStreamId, 0, 100, true, false, onEventAppeared, credentials, function(completed) {
+connection.readStreamEventsForward(nonExistentStreamId, Long.fromInt(0), 100, true, false, onEventAppeared, credentials, function(completed) {
     console.log('Received a completed event: ' + EventStoreClient.ReadStreamResult.getName(completed.result) + ' (error: ' + completed.error + ')');
     readMissing = true;
     closeIfDone();
 });
 
 console.log('Reading events forward from ' + streamId + '...');
-connection.readStreamEventsForward(streamId, 0, 100, true, false, onEventAppeared, credentials, function(completed) {
+connection.readStreamEventsForward(streamId, Long.fromInt(0), 100, true, false, onEventAppeared, credentials, function(completed) {
     console.log('Received a completed event: ' + EventStoreClient.ReadStreamResult.getName(completed.result) + ' (error: ' + completed.error + ')');
     read = true;
     closeIfDone();

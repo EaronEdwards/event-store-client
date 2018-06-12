@@ -89,7 +89,7 @@ Reads events from across all streams, in order (backward = newest first, forward
 Reads events from a specific stream, in order (backward = newest first, forward = oldest first).
 
 * streamId - The name of the stream (string)
-* fromEventNumber - The number of the event to start at
+* fromEventNumber - The number of the event to start at (Long)
 * maxCount - The maximum number of events to return (counting down from fromEventNumber)
 * resolveLinkTos - True, if links to events from other streams should be resolved (ie: for events re-published by a projection)
 * requireMaster - True, if this request must be processed by the master server in the cluster
@@ -108,7 +108,7 @@ Cancels an existing subscription to a stream.
 Writes one or more events to a stream, creating the stream if it doesn't exist.
 
 * streamId - The name of the stream (string)
-* expectedVersion - The expected version of the stream (ie: number of the most recent event) or ExpectedVersion.Any
+* expectedVersion - The expected version of the stream (ie: number of the most recent event) or ExpectedVersion.Any (Long)
 * requireMaster - True, if this request must be processed by the master server in the cluster
 * events - An array of events to be written to the stream ([Event](#event)[])
 * credentials - The username and password need to perform the operation on this stream ([ICredentials](#icredentials-interface), optional)
@@ -126,7 +126,7 @@ Represents an event either before or after it has been stored.
 Represents an event as it exists on the Event Store server. Inherits from Event and adds the following properties:
 
 * streamId - The name of the Event Store stream that this event was stored in (string)
-* eventNumber - The sequence number for this event within the stream (number)
+* eventNumber - The sequence number for this event within the stream (Long)
 * created - The date that this event was stored in the Event Store (date)
 * link - If event was read from a stream using the resolveLinkTos flag, will contain the original link data (from before the event was resolved.) (StoredEvent)
 
@@ -139,8 +139,8 @@ An object containing credentials for access to secured resources.
 ## ISubscriptionConfirmation interface
 Passed to the onConfirmed callback used by subscribeToStream() when a subscription is successfully created.
 
-* lastCommitPosition - The last commit position within the stream (number)
-* lastEventNumber - The last event number within the stream (number)
+* lastCommitPosition - The last commit position within the stream (Long)
+* lastEventNumber - The last event number within the stream (Long)
 
 ## ISubscriptionDropped interface
 Passed to the onDropped callback used by subscribeToStream() when a subscription terminates, or cannot be established.
@@ -161,7 +161,7 @@ A property bag of settings passed when creating a new catch-up subscription.
 * resolveLinkTos - Whether or not to resolve link events.
 
 ## EventStoreStreamCatchUpSubscription class
-Represents a catch-up subscription to a single stream. 
+Represents a catch-up subscription to a single stream.
 
 ### EventStoreStreamCatchUpSubscription.start()
 Initiate start of the catch-up subscription.

@@ -7,6 +7,8 @@ var testData = require("./common/testData");
 var defaultHostName = dbconn.defaultHostName;
 var credentials = dbconn.credentials;
 
+var Long = require("long");
+
 describe('Catch-Up Subscription', function() {
     var testStreams = [];
 
@@ -18,18 +20,18 @@ describe('Catch-Up Subscription', function() {
                 testStreams.push(streamName);
 
                 var settings = new EventStoreClient.CatchUpSubscription.Settings();
-                
+
                 testData.writeEvents(
                     connection, credentials, streamName, 10,
                     testData.fooEvent,
                     function () {
                         connection.subscribeToStreamFrom(
-                            streamName, 6, credentials,
+                            streamName, Long.fromInt(6), credentials,
                             function (event) {
                                 actualEventNumbers.push(event.eventNumber);
                             },
                             function () {
-                                assert.deepEqual(actualEventNumbers, [7, 8, 9]);
+                                assert.deepEqual(actualEventNumbers, [Long.fromInt(7), Long.fromInt(8), Long.fromInt(9)]);
                                 done();
                             },
                             function () {
@@ -55,12 +57,12 @@ describe('Catch-Up Subscription', function() {
                     testData.fooEvent,
                     function () {
                         connection.subscribeToStreamFrom(
-                            streamName, 6, credentials,
+                            streamName, Long.fromInt(6), credentials,
                             function (event) {
                                 actualEventNumbers.push(event.eventNumber);
 
-                                if (liveProcessingStarted && event.eventNumber >= 12) {
-                                    assert.deepEqual(actualEventNumbers, [7, 8, 9, 10, 11, 12]);
+                                if (liveProcessingStarted && event.eventNumber.gte(12)) {
+                                    assert.deepEqual(actualEventNumbers, [Long.fromInt(7), Long.fromInt(8), Long.fromInt(9), Long.fromInt(10), Long.fromInt(11), Long.fromInt(12)]);
                                     done();
                                 }
                             },
@@ -91,12 +93,12 @@ describe('Catch-Up Subscription', function() {
                     testData.fooEvent,
                     function () {
                         connection.subscribeToStreamFrom(
-                            streamName, 6, credentials,
+                            streamName, Long.fromInt(6), credentials,
                             function (event) {
                                 actualEventNumbers.push(event.eventNumber);
                             },
                             function () {
-                                assert.deepEqual(actualEventNumbers, [7, 8, 9]);
+                                assert.deepEqual(actualEventNumbers, [Long.fromInt(7), Long.fromInt(8), Long.fromInt(9)]);
                                 done();
                             },
                             function () {
@@ -123,7 +125,7 @@ describe('Catch-Up Subscription', function() {
                     function () {
                         var subscription =
                             connection.subscribeToStreamFrom(
-                                streamName, 6, credentials,
+                                streamName, Long.fromInt(6), credentials,
                                 function (event) {},
                                 function () {
                                     subscription.stop();
@@ -149,7 +151,7 @@ describe('Catch-Up Subscription', function() {
                     function () {
                         var subscription =
                             connection.subscribeToStreamFrom(
-                                streamName, 6, credentials,
+                                streamName, Long.fromInt(6), credentials,
                                 function (event) { throw new Error('unable to cope with existence'); },
                                 function () {},
                                 function (subscription, reason, err) {
